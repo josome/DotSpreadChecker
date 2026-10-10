@@ -27,7 +27,7 @@ ns.locales.enUS = {
     OPT_COMBAT_ONLY      = "Only enemies in combat with you",
     OPT_MINIMAP          = "Show minimap button",
     OPT_RESET            = "Reset position",
-    OPT_CLASS_COLOR      = "Class colour instead of red for applied DoTs",
+    OPT_CLASS_COLOR      = "Class colours (outline when missing, filled when applied)",
     OPT_COLUMNS          = "Squares per row",
     OPT_SIZE             = "Square size (pixels)",
 }

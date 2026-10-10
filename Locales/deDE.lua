@@ -24,7 +24,7 @@ ns.locales.deDE = {
     OPT_COMBAT_ONLY      = "Nur Gegner, die mit dir kämpfen",
     OPT_MINIMAP          = "Minimap-Symbol anzeigen",
     OPT_RESET            = "Position zurücksetzen",
-    OPT_CLASS_COLOR      = "Klassenfarbe statt Rot bei aktivem DoT",
+    OPT_CLASS_COLOR      = "Klassenfarbe (Rahmen = fehlt, gefüllt = DoT drauf)",
     OPT_COLUMNS          = "Quadrate pro Zeile",
     OPT_SIZE             = "Quadratgröße (Pixel)",
 }
