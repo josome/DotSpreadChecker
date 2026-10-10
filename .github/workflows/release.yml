@@ -1,12 +1,21 @@
 # Builds the addon zip from the tagged commit and attaches it to the GitHub
 # release. The zip contains a single DotSpreadChecker/ folder, so it can be
 # unpacked straight into Interface/AddOns.
+#
+# Runs on any pushed tag starting with v or V (a release created on GitHub
+# with a new tag counts), or by hand from the Actions tab for an existing tag.
 name: Package and release
 
 on:
   push:
     tags:
       - "v*"
+      - "V*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to package, e.g. v0.12.0"
+        required: true
 
 permissions:
   contents: write
@@ -17,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
 
       - uses: BigWigsMods/packager@v2
