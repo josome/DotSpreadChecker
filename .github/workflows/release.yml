@@ -1,21 +1,12 @@
-# Builds the addon zip from the tagged commit and attaches it to the GitHub
-# release. The zip contains a single DotSpreadChecker/ folder, so it can be
-# unpacked straight into Interface/AddOns.
-#
-# Runs on any pushed tag starting with v or V (a release created on GitHub
-# with a new tag counts), or by hand from the Actions tab for an existing tag.
 name: Package and release
 
+# Release on every push to master whose .toc "## Version" has no tag yet.
+# Bump the version in DotSpreadChecker.toc and push; the tag v<version>
+# and the release with the packaged zip are created here.
 on:
   push:
-    tags:
-      - "v*"
-      - "V*"
+    branches: [master]
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Existing tag to package, e.g. v0.12.0"
-        required: true
 
 permissions:
   contents: write
@@ -26,9 +17,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || github.ref }}
           fetch-depth: 0
 
+      - name: Tag version from .toc
+        id: version
+        run: |
+          version=$(sed -n 's/^## Version:[[:space:]]*//p' DotSpreadChecker.toc | tr -d '\r[:space:]')
+          tag="v${version}"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+            echo "Tag ${tag} already exists, nothing to release."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            git tag "${tag}"
+            git push origin "${tag}"
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: BigWigsMods/packager@v2
+        if: steps.version.outputs.release == 'true'
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}

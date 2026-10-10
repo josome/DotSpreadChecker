@@ -3,7 +3,7 @@
 ## Notes: DoT spread monitor for Affliction, Shadow, Fire, Unholy, Assassination, Arms, Enhancement, Balance and Feral. One square per enemy nameplate, red when your DoTs are up. Based on WADM by guezito (fork of ARDM).
 ## Notes-deDE: DoT-Monitor für Gebrechen, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht und Wildheit. Ein Quadrat pro Gegner, rot wenn deine DoTs drauf sind. Basiert auf WADM von guezito.
 ## Author: Jörn (based on WADM by guezito)
-## Version: 0.12.0
+## Version: 0.12.0-beta.2
 ## X-Flavor: Retail
 ## X-License: GPL-2.0-or-later
 ## SavedVariables: DotSpreadCheckerDB

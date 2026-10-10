@@ -34,4 +34,4 @@ Based on WADM by guezito (itself a fork of ARDM). GPL-2.0-or-later.
 
 ## Releasing
 
-Create a release on GitHub with a new tag like `v0.13.0` (target `master`). For a tag that already exists, run the workflow by hand from the Actions tab and enter the tag. The "Package and release" workflow then builds `DotSpreadChecker-v0.13.0.zip` with a single `DotSpreadChecker/` folder and attaches it to the release. Use that file, not GitHub's automatic "Source code" archive.
+Raise `## Version` in `DotSpreadChecker.toc` (for example to `0.13.0` or `0.13.0-beta.1`) and push to `master`. The "Package and release" workflow then creates the tag `v0.13.0`, builds `DotSpreadChecker-v0.13.0.zip` with a single `DotSpreadChecker/` folder and publishes it as a release. Versions with `alpha` or `beta` become pre-releases. A push without a version change releases nothing. Use the packaged zip, not GitHub's automatic "Source code" archive.
