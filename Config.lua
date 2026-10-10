@@ -32,6 +32,8 @@ local defaults = {
     -- Only enemies that are actually fighting get a square. Idle nameplates
     -- within range can never turn red, so they would only pad the grid.
     combatOnly  = true,
+    -- Paint squares with an applied DoT in the player's class colour instead of red.
+    classColor  = true,
     dbVersion   = 0,
     minimap     = { hide = false },
     debug       = false,

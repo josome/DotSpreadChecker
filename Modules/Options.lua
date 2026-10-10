@@ -270,10 +270,15 @@ local function createPanel()
         end)
     minimap:SetPoint("TOPLEFT", combat, "BOTTOMLEFT", 0, -2)
 
+    local classColor = createCheck(panel, L["OPT_CLASS_COLOR"],
+        function() return ns.db.classColor end,
+        function(v) ns.db.classColor = v; relayout(true) end)
+    classColor:SetPoint("TOPLEFT", minimap, "BOTTOMLEFT", 0, -2)
+
     local columns = createStepper(panel, L["OPT_COLUMNS"], 1, 20, 1,
         function() return ns.db.columns end,
         function(v) ns.db.columns = v; relayout(false) end)
-    columns:SetPoint("TOPLEFT", minimap, "BOTTOMLEFT", 4, -8)
+    columns:SetPoint("TOPLEFT", classColor, "BOTTOMLEFT", 4, -8)
 
     local size = createStepper(panel, L["OPT_SIZE"], 8, 48, 2,
         function() return ns.db.squareSize end,

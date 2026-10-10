@@ -18,7 +18,25 @@ local M = {}
 ns:RegisterModule("display", M)
 
 local WHITE = { 1, 1, 1, 1 }
+local DARK  = { 0.15, 0.15, 0.15, 1 }
 local RED   = { 1, 0.15, 0.15, 1 }
+
+-- "Applied" colour: the player's class colour when enabled, red otherwise.
+local function appliedColor()
+    if ns.db.classColor then
+        local _, classFile = UnitClass("player")
+        local c = classFile and RAID_CLASS_COLORS and RAID_CLASS_COLORS[classFile]
+        if c then return { c.r, c.g, c.b, 1 } end
+    end
+    return RED
+end
+
+-- Empty squares are white, unless the applied colour is itself close to white
+-- (Priest), in which case they turn dark so the two states stay apart.
+local function emptyColor(applied)
+    local luminance = 0.299 * applied[1] + 0.587 * applied[2] + 0.114 * applied[3]
+    return luminance > 0.8 and DARK or WHITE
+end
 
 -- Every visible region bleeds this far past the clipping frame on all sides.
 -- The clip rect is then the single thing that defines a square's edges, so the
@@ -106,12 +124,15 @@ local function paintBleedTexture(tex, size, r, g, b, a)
     tex:SetTexelSnappingBias(0)
 end
 
+-- The colour is captured when the container is built; changing it later means
+-- rebuilding the slots (see M:Relayout).
 local function makeButtonInitializer(size)
     local pitch = size + BUTTON_PAD
+    local c = appliedColor()
     return function(button)
         pcall(button.SetMouseMotionEnabled, button, false)
         pcall(button.SetSize, button, pitch, pitch)
-        paintBleedTexture(button:CreateTexture(nil, "ARTWORK"), size, RED[1], RED[2], RED[3], RED[4])
+        paintBleedTexture(button:CreateTexture(nil, "ARTWORK"), size, c[1], c[2], c[3], c[4])
     end
 end
 
@@ -252,10 +273,12 @@ local function createSlot()
     slot.clip:SetFrameLevel(root:GetFrameLevel() + 5)
 
     slot.base = slot.clip:CreateTexture(nil, "BACKGROUND")
-    paintBleedTexture(slot.base, size, WHITE[1], WHITE[2], WHITE[3], WHITE[4])
+    local applied = appliedColor()
+    local empty = emptyColor(applied)
+    paintBleedTexture(slot.base, size, empty[1], empty[2], empty[3], empty[4])
 
     slot.preview = slot.clip:CreateTexture(nil, "ARTWORK")
-    paintBleedTexture(slot.preview, size, RED[1], RED[2], RED[3], RED[4])
+    paintBleedTexture(slot.preview, size, applied[1], applied[2], applied[3], applied[4])
     slot.preview:Hide()
 
     pool[#pool + 1] = slot
