@@ -85,6 +85,8 @@ local function spellWidget(row, i)
     local w = row.spells[i]
     if w then return w end
     w = {}
+    w.check = CreateFrame("CheckButton", nil, row, "UICheckButtonTemplate")
+    w.check:SetSize(22, 22)
     w.icon = row:CreateTexture(nil, "ARTWORK")
     w.icon:SetSize(ICON_SIZE, ICON_SIZE)
     w.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -94,7 +96,22 @@ local function spellWidget(row, i)
     return w
 end
 
-local function fillRows()
+local fillRows
+
+-- Opt a single DoT in or out for a spec, then let the tracker rebuild the
+-- active spell set; an opted-out DoT no longer has to be on an enemy for its
+-- square to fill.
+local function setSpellEnabled(specID, spellID, enabled)
+    local all = ns.db.disabledSpells
+    all[specID] = all[specID] or {}
+    all[specID][spellID] = (not enabled) or nil
+    if next(all[specID]) == nil then all[specID] = nil end
+    local tracker = ns.modules.tracker
+    if tracker then tracker:UpdateEligibility() end
+    ns:CallSafe(fillRows)
+end
+
+function fillRows()
     local L = ns.L
     local current = ns.state and ns.state.specID
     local list = sortedSpecs()
@@ -112,20 +129,32 @@ local function fillRows()
 
         local anchor, anchorPoint, gap = row.label, "RIGHT", 8
         local spells = entry.profile.spells
+        local off = ns.db.disabledSpells[entry.specID]
         for i, id in ipairs(spells) do
             local w = spellWidget(row, i)
+            local enabled = not (off and off[id])
+            w.check:ClearAllPoints()
+            w.check:SetPoint("LEFT", anchor, anchorPoint, gap, 0)
+            w.check:SetChecked(enabled)
+            w.check:SetScript("OnClick", function(self)
+                setSpellEnabled(entry.specID, id, self:GetChecked() and true or false)
+            end)
+            w.check:Show()
             w.icon:ClearAllPoints()
-            w.icon:SetPoint("LEFT", anchor, anchorPoint, gap, 0)
+            w.icon:SetPoint("LEFT", w.check, "RIGHT", 2, 0)
+            w.icon:SetDesaturated(not enabled)
             w.icon:SetTexture(spellIcon(id) or 134400)
             w.text:ClearAllPoints()
             w.text:SetPoint("LEFT", w.icon, "RIGHT", 4, 0)
             local name = spellName(id) or ("#" .. id)
             w.text:SetText(i < #spells and (name .. "  +") or name)
+            w.text:SetTextColor(enabled and 1 or 0.5, enabled and 1 or 0.5, enabled and 1 or 0.5)
             w.icon:Show()
             w.text:Show()
             anchor, anchorPoint, gap = w.text, "RIGHT", 8
         end
         for i = #spells + 1, #row.spells do
+            row.spells[i].check:Hide()
             row.spells[i].icon:Hide()
             row.spells[i].text:Hide()
         end

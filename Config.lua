@@ -12,6 +12,7 @@ ns.PROFILES = {
     [71]  = { class = "WARRIOR",     spells = { 388539 } },        -- Arms: Rend
     [263] = { class = "SHAMAN",      spells = { 188389 } },        -- Enhancement: Flame Shock
     [102] = { class = "DRUID",       spells = { 164812, 164815 } }, -- Balance: Moonfire + Sunfire
+    [103] = { class = "DRUID",       spells = { 155722, 1079 } },  -- Feral: Rake + Rip
 }
 
 -- Set by Tracker to the profile of the current spec, or nil when none applies.
@@ -34,6 +35,8 @@ local defaults = {
     combatOnly  = true,
     -- Paint squares with an applied DoT in the player's class colour instead of red.
     classColor  = true,
+    -- [specID] = { [spellID] = true } for DoTs the player opted out of.
+    disabledSpells = {},
     dbVersion   = 0,
     minimap     = { hide = false },
     debug       = false,

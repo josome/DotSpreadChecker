@@ -193,7 +193,7 @@ end
 -- A container's spell filter is fixed once its aura group is registered, so
 -- each slot keeps one container per spec and switches between them.
 local function ensureContainer(slot)
-    local key = ns.state.specID or 0
+    local key = ns.state.profileKey or 0
     slot.containers = slot.containers or {}
     if slot.containers[key] == nil then
         local ok, container = pcall(createContainer, slot.clip, ns.db.squareSize)
@@ -433,8 +433,8 @@ function M:Refresh()
     if not root then return end
     -- A spec change swaps the spell filter: unbind every slot so the next
     -- render binds the containers that belong to the new spec.
-    if ns.state.specID ~= renderedSpec then
-        renderedSpec = ns.state.specID
+    if ns.state.profileKey ~= renderedSpec then
+        renderedSpec = ns.state.profileKey
         for i = 1, #pool do hideSlot(pool[i]) end
     end
     applyPosition()

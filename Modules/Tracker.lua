@@ -66,11 +66,24 @@ function M:UpdateEligibility()
     local specID = currentSpecID()
     local profile = specID and ns.PROFILES[specID]
     if profile and profile.class ~= classToken then profile = nil end
-    local eligible = profile ~= nil
-    ns.TRACKED_SPELLS = profile and profile.spells or nil
-    if eligible ~= state.eligible or specID ~= state.specID then
+    -- Drop DoTs the player opted out of in the options. With none left the
+    -- spec has nothing to show and counts as unsupported.
+    local spells = {}
+    if profile then
+        local off = ns.db.disabledSpells and ns.db.disabledSpells[specID]
+        for _, id in ipairs(profile.spells) do
+            if not (off and off[id]) then spells[#spells + 1] = id end
+        end
+    end
+    local eligible = #spells > 0
+    ns.TRACKED_SPELLS = eligible and spells or nil
+    -- The key changes whenever the spell set does, so Display rebuilds its
+    -- aura containers (their filter is fixed once created).
+    local key = eligible and (specID .. ":" .. table.concat(spells, ",")) or nil
+    if eligible ~= state.eligible or key ~= state.profileKey then
         state.eligible = eligible
         state.specID = eligible and specID or nil
+        state.profileKey = key
         ns:Debug("eligible=%s spec=%s", tostring(eligible), tostring(specID))
         self:ApplyEventRegistration()
         ns:RefreshAll()

@@ -18,6 +18,9 @@ One square per enemy nameplate in combat. A square turns red once every DoT trac
 | Arms Warrior | Rend |
 | Enhancement Shaman | Flame Shock |
 | Balance Druid | Moonfire + Sunfire |
+| Feral Druid | Rake + Rip |
+
+Each DoT can be unticked per spec in the options to ignore it.
 
 ## Usage
 

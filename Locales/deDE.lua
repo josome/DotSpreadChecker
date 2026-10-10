@@ -2,7 +2,7 @@ local addonName, ns = ...
 
 ns.locales = ns.locales or {}
 ns.locales.deDE = {
-    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht)",
+    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht, Wildheit)",
     TOOLTIP_LEFT_CLICK   = "Linksklick: Anker sperren / entsperren",
     TOOLTIP_RIGHT_CLICK  = "Rechtsklick: Position zurücksetzen",
     ANCHOR_LABEL         = "DoTs (ziehen)",
@@ -18,7 +18,7 @@ ns.locales.deDE = {
     OPT_DESC             = "Ein Quadrat pro Gegner im Kampf. Es wird rot, sobald alle DoTs deiner Spec auf diesem Gegner liegen.",
     OPT_CURRENT          = "Aktuelle Spec: %s",
     OPT_CURRENT_NONE     = "Aktuelle Spec: nicht unterstützt, die Anzeige bleibt ausgeblendet.",
-    OPT_TRACKED_HEADER   = "Getrackte DoTs pro Spec",
+    OPT_TRACKED_HEADER   = "Getrackte DoTs pro Spec (Häkchen weg = DoT ignorieren)",
     OPT_SETTINGS_HEADER  = "Einstellungen",
     OPT_LOCKED           = "Position sperren",
     OPT_COMBAT_ONLY      = "Nur Gegner, die mit dir kämpfen",
