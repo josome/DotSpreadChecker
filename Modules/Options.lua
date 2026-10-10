@@ -13,6 +13,7 @@ local ICON_SIZE  = 22
 local panel, category
 local rows = {}
 local checks = {}
+local steppers = {}
 
 local function specInfo(specID)
     if not GetSpecializationInfoByID then return nil end
@@ -161,7 +162,6 @@ end
 
 -- A small "label  [-] value [+]" control. Plain buttons rather than a slider
 -- template, so it does not depend on which slider templates the client ships.
-local steppers = {}
 
 local function createStepper(parent, label, minValue, maxValue, step, get, set)
     local frame = CreateFrame("Frame", nil, parent)
