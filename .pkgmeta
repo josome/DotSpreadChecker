@@ -1,0 +1,4 @@
+package-as: DotSpreadChecker
+
+ignore:
+  - README.md

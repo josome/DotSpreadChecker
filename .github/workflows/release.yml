@@ -1,0 +1,24 @@
+# Builds the addon zip from the tagged commit and attaches it to the GitHub
+# release. The zip contains a single DotSpreadChecker/ folder, so it can be
+# unpacked straight into Interface/AddOns.
+name: Package and release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: BigWigsMods/packager@v2
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
