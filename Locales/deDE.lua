@@ -1,0 +1,29 @@
+local addonName, ns = ...
+
+ns.locales = ns.locales or {}
+ns.locales.deDE = {
+    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht)",
+    TOOLTIP_LEFT_CLICK   = "Linksklick: Anker sperren / entsperren",
+    TOOLTIP_RIGHT_CLICK  = "Rechtsklick: Position zurücksetzen",
+    ANCHOR_LABEL         = "DoTs (ziehen)",
+    MSG_LOCKED           = "Anker gesperrt",
+    MSG_UNLOCKED         = "Anker entsperrt (zum Verschieben ziehen)",
+    MSG_RESET            = "Position zurückgesetzt",
+    MSG_COMBAT_ONLY_ON   = "nur Gegner im Kampf werden angezeigt",
+    MSG_COMBAT_ONLY_OFF  = "alle feindlichen Namensplaketten werden angezeigt",
+    MSG_MINIMAP_SHOWN    = "Minimap-Symbol eingeblendet",
+    MSG_MINIMAP_HIDDEN   = "Minimap-Symbol ausgeblendet",
+    MSG_NO_AURA_CONTAINER = "Dieser Client unterstützt keine AuraContainer; die Quadrate bleiben weiß.",
+    MSG_HELP             = "Befehle: lock | unlock | reset | combat | minimap | debug | probe",
+    OPT_DESC             = "Ein Quadrat pro Gegner im Kampf. Es wird rot, sobald alle DoTs deiner Spec auf diesem Gegner liegen.",
+    OPT_CURRENT          = "Aktuelle Spec: %s",
+    OPT_CURRENT_NONE     = "Aktuelle Spec: nicht unterstützt, die Anzeige bleibt ausgeblendet.",
+    OPT_TRACKED_HEADER   = "Getrackte DoTs pro Spec",
+    OPT_SETTINGS_HEADER  = "Einstellungen",
+    OPT_LOCKED           = "Position sperren",
+    OPT_COMBAT_ONLY      = "Nur Gegner, die mit dir kämpfen",
+    OPT_MINIMAP          = "Minimap-Symbol anzeigen",
+    OPT_RESET            = "Position zurücksetzen",
+    OPT_COLUMNS          = "Quadrate pro Zeile",
+    OPT_SIZE             = "Quadratgröße (Pixel)",
+}
