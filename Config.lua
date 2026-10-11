@@ -5,6 +5,10 @@ local addonName, ns = ...
 -- present on the enemy, so list exactly the DoTs that should be spread.
 ns.PROFILES = {
     [265] = { class = "WARLOCK",     spells = { 980 } },           -- Affliction: Agony
+    -- Destruction's DoT depends on the hero tree: Hellcaller replaces Immolate
+    -- with Wither. Soul Harvester is not available to Destruction.
+    [267] = { class = "WARLOCK",     spells = { 445474, 157736 },  -- Destruction: Wither / Immolate
+              heroSpells = { [58] = { 445474 }, [59] = { 157736 } } },
     [256] = { class = "PRIEST",      spells = { 589 } },           -- Discipline: Shadow Word: Pain
     [258] = { class = "PRIEST",      spells = { 34914, 589 } },    -- Shadow: Vampiric Touch + Shadow Word: Pain
     [63]  = { class = "MAGE",        spells = { 12654 } },         -- Fire: Ignite

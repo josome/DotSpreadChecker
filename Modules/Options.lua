@@ -123,8 +123,12 @@ function fillRows()
         row:Show()
 
         row.specIcon:SetTexture(entry.icon or 134400)
-        local suffix = entry.profile.heroName
-            and (" |cff9d9d9d" .. L["OPT_HERO_ONLY"]:format(entry.profile.heroName) .. "|r") or ""
+        local suffix = ""
+        if entry.profile.heroName then
+            suffix = " |cff9d9d9d" .. L["OPT_HERO_ONLY"]:format(entry.profile.heroName) .. "|r"
+        elseif entry.profile.heroSpells then
+            suffix = " |cff9d9d9d" .. L["OPT_HERO_DEPENDS"] .. "|r"
+        end
         row.label:SetText(("|c%s%s|r |cff9d9d9d(%s)|r%s"):format(
             classColor(entry.classFile), entry.name, entry.className, suffix))
         row.highlight:SetShown(entry.specID == current)

@@ -11,6 +11,7 @@ One square per enemy nameplate in combat. A square turns red once every DoT trac
 | Spec | DoTs |
 |---|---|
 | Affliction Warlock | Agony |
+| Destruction Warlock | Wither (Hellcaller) or Immolate (Diabolist) |
 | Discipline Priest | Shadow Word: Pain |
 | Shadow Priest | Vampiric Touch + Shadow Word: Pain |
 | Fire Mage | Ignite |

@@ -5,7 +5,7 @@ local addonName, ns = ...
 ns.locales = ns.locales or {}
 ns.locales.enUS = {
     ADDON_TITLE          = "DotSpreadChecker",
-    TOOLTIP_DESC         = "DoT spread monitor (Affliction, Discipline, Shadow, Fire, Unholy, Assassination, Arms, Elemental, Enhancement, Balance, Feral, Guardian)",
+    TOOLTIP_DESC         = "DoT spread monitor (Affliction, Destruction, Discipline, Shadow, Fire, Unholy, Assassination, Arms, Elemental, Enhancement, Balance, Feral, Guardian)",
     TOOLTIP_LEFT_CLICK   = "Left-click: open options",
     TOOLTIP_RIGHT_CLICK  = "Right-click: lock / unlock the anchor (move)",
     ANCHOR_LABEL         = "DoTs (drag)",
@@ -31,6 +31,7 @@ ns.locales.enUS = {
     OPT_SWIPE            = "Show remaining DoT time as a swipe",
     OPT_PANDEMIC         = "White frame in the pandemic window (DoT can be refreshed)",
     OPT_HERO_ONLY        = "only with %s",
+    OPT_HERO_DEPENDS     = "by hero talents",
     OPT_COLUMNS          = "Squares per row",
     OPT_SIZE             = "Square size (pixels)",
 }

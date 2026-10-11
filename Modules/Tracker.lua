@@ -72,12 +72,19 @@ function M:UpdateEligibility()
             and C_ClassTalents.GetActiveHeroTalentSpec()
         if hero ~= profile.heroSpec then profile = nil end
     end
+    -- Specs whose DoT depends on the hero tree only track that tree's DoTs.
+    local candidates = profile and profile.spells
+    if profile and profile.heroSpells then
+        local hero = C_ClassTalents and C_ClassTalents.GetActiveHeroTalentSpec
+            and C_ClassTalents.GetActiveHeroTalentSpec()
+        candidates = hero and profile.heroSpells[hero]
+    end
     -- Drop DoTs the player opted out of in the options. With none left the
     -- spec has nothing to show and counts as unsupported.
     local spells = {}
-    if profile then
+    if candidates then
         local off = ns.db.disabledSpells and ns.db.disabledSpells[specID]
-        for _, id in ipairs(profile.spells) do
+        for _, id in ipairs(candidates) do
             if not (off and off[id]) then spells[#spells + 1] = id end
         end
     end
