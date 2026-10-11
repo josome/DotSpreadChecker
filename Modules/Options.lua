@@ -319,8 +319,8 @@ local function createPanel()
     classColor:SetPoint("TOPLEFT", minimap, "BOTTOMLEFT", 0, -2)
 
     local swipe = createCheck(content, L["OPT_SWIPE"],
-        function() return ns.db.durationSwipe end,
-        function(v) ns.db.durationSwipe = v; relayout(true) end)
+        function() return ns.db.swipeOptIn end,
+        function(v) ns.db.swipeOptIn = v; relayout(true) end)
     swipe:SetPoint("TOPLEFT", classColor, "BOTTOMLEFT", 0, -2)
 
     local pandemic = createCheck(content, L["OPT_PANDEMIC"],

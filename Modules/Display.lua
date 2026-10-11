@@ -193,7 +193,7 @@ end
 local function makeButtonInitializer(size)
     local pitch = size + BUTTON_PAD
     local c = appliedColor()
-    local swipe, pandemic = ns.db.durationSwipe, ns.db.pandemicFrame
+    local swipe, pandemic = ns.db.swipeOptIn, ns.db.pandemicFrame
     return function(button)
         pcall(button.SetMouseMotionEnabled, button, false)
         pcall(button.SetSize, button, pitch, pitch)
