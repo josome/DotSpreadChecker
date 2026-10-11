@@ -1,6 +1,6 @@
 name: Package and release
 
-# Release on every push to master whose .toc "## Version" has no tag yet.
+# Release on every push to master whose .toc "## Version" has no release yet.
 # Bump the version in DotSpreadChecker.toc and push; the tag v<version>
 # and the release with the packaged zip are created here.
 on:
@@ -21,20 +21,32 @@ jobs:
 
       - name: Tag version from .toc
         id: version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version=$(sed -n 's/^## Version:[[:space:]]*//p' DotSpreadChecker.toc | tr -d '\r[:space:]')
           tag="v${version}"
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
-          if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
-            echo "Tag ${tag} already exists, nothing to release."
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            echo "Release ${tag} already exists, nothing to do."
             echo "release=false" >> "$GITHUB_OUTPUT"
-          else
+            exit 0
+          fi
+          if ! git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
             git tag "${tag}"
             git push origin "${tag}"
-            echo "release=true" >> "$GITHUB_OUTPUT"
           fi
+          git checkout -q "${tag}"
+          echo "release=true" >> "$GITHUB_OUTPUT"
 
-      - uses: BigWigsMods/packager@v2
+      # The packager action refuses to build a branch push whose commit is
+      # tagged, so its script runs directly with the tag as the ref.
+      - name: Package and upload
         if: steps.version.outputs.release == 'true'
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/BigWigsMods/packager/v2/release.sh -o "$RUNNER_TEMP/release.sh"
+          GITHUB_REF="refs/tags/${TAG}" GITHUB_REF_NAME="${TAG}" GITHUB_REF_TYPE=tag \
+            bash "$RUNNER_TEMP/release.sh"
