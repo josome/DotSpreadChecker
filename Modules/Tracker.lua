@@ -67,6 +67,11 @@ function M:UpdateEligibility()
     local specID = currentSpecID()
     local profile = specID and ns.PROFILES[specID]
     if profile and profile.class ~= classToken then profile = nil end
+    if profile and profile.heroSpec then
+        local hero = C_ClassTalents and C_ClassTalents.GetActiveHeroTalentSpec
+            and C_ClassTalents.GetActiveHeroTalentSpec()
+        if hero ~= profile.heroSpec then profile = nil end
+    end
     -- Drop DoTs the player opted out of in the options. With none left the
     -- spec has nothing to show and counts as unsupported.
     local spells = {}
@@ -494,6 +499,11 @@ function handlers.ENCOUNTER_END()
     setEncounter(false)
 end
 
+-- A hero talent switch can turn a hero-gated profile (Guardian) on or off.
+function handlers.TRAIT_CONFIG_UPDATED()
+    M:UpdateEligibility()
+end
+
 function handlers.PLAYER_SPECIALIZATION_CHANGED(unit)
     if unit == nil or unit == "player" then
         M:UpdateEligibility()
@@ -580,6 +590,7 @@ end
 
 function M:OnPlayerLogin()
     frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    frame:RegisterEvent("TRAIT_CONFIG_UPDATED")
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:UpdateEligibility()
 end

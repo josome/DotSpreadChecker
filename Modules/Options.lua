@@ -123,8 +123,10 @@ function fillRows()
         row:Show()
 
         row.specIcon:SetTexture(entry.icon or 134400)
-        row.label:SetText(("|c%s%s|r |cff9d9d9d(%s)|r"):format(
-            classColor(entry.classFile), entry.name, entry.className))
+        local suffix = entry.profile.heroName
+            and (" |cff9d9d9d" .. L["OPT_HERO_ONLY"]:format(entry.profile.heroName) .. "|r") or ""
+        row.label:SetText(("|c%s%s|r |cff9d9d9d(%s)|r%s"):format(
+            classColor(entry.classFile), entry.name, entry.className, suffix))
         row.highlight:SetShown(entry.specID == current)
 
         local anchor, anchorPoint, gap = row.label, "RIGHT", 8

@@ -20,6 +20,7 @@ One square per enemy nameplate in combat. A square turns red once every DoT trac
 | Enhancement Shaman | Flame Shock |
 | Balance Druid | Moonfire + Sunfire |
 | Feral Druid | Rake + Rip |
+| Guardian Druid (Elune's Chosen only) | Moonfire |
 
 Each DoT can be unticked per spec in the options to ignore it.
 

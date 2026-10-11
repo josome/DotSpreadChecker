@@ -13,6 +13,9 @@ ns.PROFILES = {
     [71]  = { class = "WARRIOR",     spells = { 388539 } },        -- Arms: Rend
     [263] = { class = "SHAMAN",      spells = { 188389 } },        -- Enhancement: Flame Shock
     [102] = { class = "DRUID",       spells = { 164812, 164815 } }, -- Balance: Moonfire + Sunfire
+    -- Guardian only spreads Moonfire with the Elune's Chosen hero talents
+    -- (HeroSpecID 24); with any other hero tree the spec counts as unsupported.
+    [104] = { class = "DRUID",       spells = { 164812 }, heroSpec = 24, heroName = "Elune's Chosen" }, -- Guardian: Moonfire
     [103] = { class = "DRUID",       spells = { 155722, 1079 } },  -- Feral: Rake + Rip
 }
 

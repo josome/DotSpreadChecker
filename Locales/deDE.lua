@@ -2,7 +2,7 @@ local addonName, ns = ...
 
 ns.locales = ns.locales or {}
 ns.locales.deDE = {
-    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Disziplin, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht, Wildheit)",
+    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Disziplin, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht, Wildheit, Wächter)",
     TOOLTIP_LEFT_CLICK   = "Linksklick: Optionen öffnen",
     TOOLTIP_RIGHT_CLICK  = "Rechtsklick: Anker sperren / entsperren (verschieben)",
     ANCHOR_LABEL         = "DoTs (ziehen)",
@@ -27,6 +27,7 @@ ns.locales.deDE = {
     OPT_CLASS_COLOR      = "Klassenfarbe (Rahmen = fehlt, gefüllt = DoT drauf)",
     OPT_SWIPE            = "Restlaufzeit des DoTs als Swipe anzeigen",
     OPT_PANDEMIC         = "Weißer Rahmen im Pandemic-Fenster (DoT erneuerbar)",
+    OPT_HERO_ONLY        = "nur mit %s",
     OPT_COLUMNS          = "Quadrate pro Zeile",
     OPT_SIZE             = "Quadratgröße (Pixel)",
 }
