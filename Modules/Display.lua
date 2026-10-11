@@ -357,6 +357,21 @@ local function createSlot()
         paintBleedTexture(slot.base, size, WHITE[1], WHITE[2], WHITE[3], WHITE[4])
     end
 
+    -- Red X over an enemy that died, shown until its nameplate goes away. It
+    -- sits on its own frame above the aura container.
+    slot.cross = CreateFrame("Frame", nil, slot.clip)
+    slot.cross:SetAllPoints(slot.clip)
+    slot.cross:SetFrameLevel(slot.clip:GetFrameLevel() + 10)
+    local thickness = math.max(2, math.floor(size / 7))
+    for _, angle in ipairs({ 45, -45 }) do
+        local line = slot.cross:CreateTexture(nil, "OVERLAY")
+        line:SetPoint("CENTER")
+        line:SetSize(size * 1.25, thickness)
+        line:SetColorTexture(1, 0, 0, 1)
+        line:SetRotation(math.rad(angle))
+    end
+    slot.cross:Hide()
+
     slot.preview = slot.clip:CreateTexture(nil, "ARTWORK")
     paintBleedTexture(slot.preview, size, applied[1], applied[2], applied[3], applied[4])
     slot.preview:Hide()
@@ -379,6 +394,7 @@ end
 local function hideSlot(slot)
     slot.index = nil
     slot.preview:Hide()
+    slot.cross:Hide()
     slot.clip:Hide()
     assignUnit(slot, nil)
 end
@@ -456,6 +472,7 @@ local function render()
         slot.clip:Show()
         -- Preview alternates colours so both states are visible while placing.
         slot.preview:SetShown(not state.inCombat and i % 2 == 0)
+        slot.cross:SetShown(unit ~= nil and state.dead[unit] == true)
     end
 
     for i = 1, nextFree do

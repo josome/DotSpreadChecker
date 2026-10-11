@@ -12,6 +12,7 @@ ns.state = {
     eligible = false,   -- Affliction Warlock
     inCombat = false,
     units    = {},      -- tracked nameplate unit tokens, oldest first
+    dead     = {},      -- [unit] = true: tracked enemy that died, kept until its plate goes
 }
 local state = ns.state
 
@@ -164,8 +165,8 @@ local function isFighting(unit)
     return hasThreat(unit)
 end
 
--- A dead enemy keeps its nameplate for the length of the death animation, and
--- its DoTs are already gone, so it would sit there as an empty square. Unlike
+-- A dead enemy keeps its nameplate for the length of the death animation. Its
+-- square stays until then and is crossed out, so a kill is visible. Unlike
 -- the other predicates this one resolves to "alive" when the answer is
 -- refused, so a secret value can never hide a live target.
 local function isDead(unit)
@@ -184,8 +185,12 @@ end
 -- of the fight, and dropping it would jump its square to the end of the grid
 -- when it comes back. Leaving is decided by engagement alone, through grace.
 local function qualifies(unit)
+    if tracked[unit] then
+        -- A dead enemy is out of combat but keeps its (crossed-out) square.
+        if state.dead[unit] then return true end
+        return isFighting(unit)
+    end
     if isDead(unit) then return false end
-    if tracked[unit] then return isFighting(unit) end
     return isHostile(unit) and isFighting(unit)
 end
 
@@ -246,6 +251,7 @@ local function setTracked(unit, wanted)
     else
         tracked[unit] = nil
         seenAt[unit] = nil
+        state.dead[unit] = nil
     end
     return true
 end
@@ -310,11 +316,11 @@ end
 local function refreshUnit(unit)
     if not plates[unit] then return false end
 
-    -- Death skips the grace period: the enemy is not coming back.
-    if tracked[unit] and isDead(unit) then
+    -- Death is marked at once and skips the grace period; the square stays
+    -- until NAME_PLATE_UNIT_REMOVED.
+    if tracked[unit] and not state.dead[unit] and isDead(unit) then
         graceUntil[unit] = nil
-        setTracked(unit, false)
-        rebuildUnitList()
+        state.dead[unit] = true
         return true
     end
 
@@ -341,6 +347,7 @@ local function syncUnitsFromNameplates()
     wipe(tracked)
     wipe(seenAt)
     wipe(graceUntil)
+    wipe(state.dead)
     local plateCount = 0
     for _, unit in ipairs(PLATE_TOKENS) do
         local ok, exists = pcall(UnitExists, unit)
@@ -472,7 +479,7 @@ handlers.UNIT_FACTION            = onUnitStateChanged
 handlers.UNIT_THREAT_LIST_UPDATE = onUnitStateChanged
 
 function handlers.UNIT_HEALTH(unit)
-    if not tracked[unit] or not isDead(unit) then return end
+    if not tracked[unit] or state.dead[unit] or not isDead(unit) then return end
     if refreshUnit(unit) then
         ns:Debug("died %s -> %d unit(s)", unit, #state.units)
         render()
@@ -533,6 +540,7 @@ function M:ApplyEventRegistration()
         wipe(tracked)
         wipe(seenAt)
         wipe(graceUntil)
+        wipe(state.dead)
         wipe(state.units)
         onCombatEnd()
     end
