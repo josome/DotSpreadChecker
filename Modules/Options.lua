@@ -98,6 +98,32 @@ end
 
 local fillRows
 
+-- Specs are grouped under one collapsible line per class. The player's own
+-- class starts expanded; the rest stay folded until clicked.
+local classRows = {}
+local expanded = {}
+local CLASS_ROW_HEIGHT = 24
+
+local function classRow(index)
+    local row = classRows[index]
+    if row then return row end
+    row = CreateFrame("Button", nil, panel.list)
+    row:SetSize(560, CLASS_ROW_HEIGHT)
+    row.bg = row:CreateTexture(nil, "BACKGROUND")
+    row.bg:SetAllPoints()
+    row.bg:SetColorTexture(1, 1, 1, 0.06)
+    row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    row.label = row:CreateFontString(nil, "OVERLAY", "GameFontNormalMed2")
+    row.label:SetPoint("LEFT", 6, 0)
+    row:SetScript("OnClick", function(self)
+        expanded[self.classFile] = not expanded[self.classFile]
+        ns:CallSafe(fillRows)
+        if panel.updateHeight then C_Timer.After(0, panel.updateHeight) end
+    end)
+    classRows[index] = row
+    return row
+end
+
 -- Opt a single DoT in or out for a spec, then let the tracker rebuild the
 -- active spell set; an opted-out DoT no longer has to be on an enemy for its
 -- square to fill.
@@ -116,11 +142,36 @@ function fillRows()
     local current = ns.state and ns.state.specID
     local list = sortedSpecs()
 
-    for index, entry in ipairs(list) do
+    local _, playerClass = UnitClass("player")
+    if playerClass and expanded[playerClass] == nil then expanded[playerClass] = true end
+
+    local y, specIndex, classIndex, lastClass = 0, 0, 0, nil
+    for _, entry in ipairs(list) do
+        if entry.classFile ~= lastClass then
+            lastClass = entry.classFile
+            classIndex = classIndex + 1
+            local header = classRow(classIndex)
+            header.classFile = entry.classFile
+            local count = 0
+            for _, other in ipairs(list) do
+                if other.classFile == entry.classFile then count = count + 1 end
+            end
+            header.label:SetText(("%s  |c%s%s|r |cff9d9d9d(%d)|r"):format(
+                expanded[entry.classFile] and "[-]" or "[+]",
+                classColor(entry.classFile), entry.className, count))
+            header:ClearAllPoints()
+            header:SetPoint("TOPLEFT", panel.list, "TOPLEFT", 0, -y)
+            header:Show()
+            y = y + CLASS_ROW_HEIGHT + 4
+        end
+        if expanded[entry.classFile] then
+        specIndex = specIndex + 1
+        local index = specIndex
         local row = rows[index] or createRow(panel.list, index)
         row:ClearAllPoints()
-        row:SetPoint("TOPLEFT", panel.list, "TOPLEFT", 0, -(index - 1) * (ROW_HEIGHT + 4))
+        row:SetPoint("TOPLEFT", panel.list, "TOPLEFT", 16, -y)
         row:Show()
+        y = y + ROW_HEIGHT + 4
 
         row.specIcon:SetTexture(entry.icon or 134400)
         local suffix = ""
@@ -129,8 +180,7 @@ function fillRows()
         elseif entry.profile.heroSpells then
             suffix = " |cff9d9d9d" .. L["OPT_HERO_DEPENDS"] .. "|r"
         end
-        row.label:SetText(("|c%s%s|r |cff9d9d9d(%s)|r%s"):format(
-            classColor(entry.classFile), entry.name, entry.className, suffix))
+        row.label:SetText(("|c%s%s|r%s"):format(classColor(entry.classFile), entry.name, suffix))
         row.highlight:SetShown(entry.specID == current)
 
         local anchor, anchorPoint, gap = row.label, "RIGHT", 8
@@ -164,8 +214,11 @@ function fillRows()
             row.spells[i].icon:Hide()
             row.spells[i].text:Hide()
         end
+        end
     end
-    for index = #list + 1, #rows do rows[index]:Hide() end
+    for index = specIndex + 1, #rows do rows[index]:Hide() end
+    for index = classIndex + 1, #classRows do classRows[index]:Hide() end
+    panel.list:SetHeight(math.max(1, y))
 
     if current and ns.PROFILES[current] then
         local name = specInfo(current) or tostring(current)
@@ -295,8 +348,9 @@ local function createPanel()
     for _ in pairs(ns.PROFILES) do count = count + 1 end
     local listHeight = count * (ROW_HEIGHT + 4)
 
+    -- fillRows sizes the list to the class lines and expanded specs.
     local settingsHeader = content:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-    settingsHeader:SetPoint("TOPLEFT", panel.list, "TOPLEFT", 0, -listHeight - 16)
+    settingsHeader:SetPoint("TOPLEFT", panel.list, "BOTTOMLEFT", 0, -16)
     settingsHeader:SetText(L["OPT_SETTINGS_HEADER"])
 
     local lock = createCheck(content, L["OPT_LOCKED"],
