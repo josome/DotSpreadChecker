@@ -37,7 +37,7 @@ local defaults = {
     classColor  = true,
     -- Swipe on applied squares showing the DoT's remaining time.
     durationSwipe = true,
-    -- Centre mark while the DoT is in its pandemic (refresh) window.
+    -- Running ants while the DoT is in its pandemic (refresh) window.
     pandemicMark  = true,
     -- [specID] = { [spellID] = true } for DoTs the player opted out of.
     disabledSpells = {},

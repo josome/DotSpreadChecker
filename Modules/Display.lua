@@ -155,23 +155,36 @@ local function addDurationSwipe(button, size)
 end
 
 -- Pandemic window: the client shows this region only while refreshing the DoT
--- would carry over its remaining time. A small white centre mark with a black
--- rim reads on every class colour.
+-- would carry over its remaining time. It carries the "marching ants" loop of
+-- the action bar proc highlight. Blizzard draws that at 1.4x the button with
+-- the ants on the button edge; at 1.2x the square the ants run just inside it,
+-- where the clip frame does not cut them off.
 local function addPandemicMark(button, size)
     local mark = CreateFrame("Frame", nil, button)
-    local m = math.max(4, math.floor(size / 3))
+    local m = size * 1.2
     mark:SetSize(m, m)
     mark:SetPoint("CENTER", button, "TOPLEFT", size / 2, -size / 2)
     mark:SetFrameLevel(button:GetFrameLevel() + 5)
-    local rim = mark:CreateTexture(nil, "ARTWORK")
-    rim:SetAllPoints()
-    rim:SetColorTexture(0, 0, 0, 1)
-    local dot = mark:CreateTexture(nil, "OVERLAY")
-    dot:SetPoint("TOPLEFT", 1, -1)
-    dot:SetPoint("BOTTOMRIGHT", -1, 1)
-    dot:SetColorTexture(1, 1, 1, 1)
+
+    local ants = mark:CreateTexture(nil, "OVERLAY")
+    ants:SetAllPoints()
+    ants:SetAtlas("UI-HUD-ActionBar-Proc-Loop-Flipbook")
+
+    local loop = mark:CreateAnimationGroup()
+    loop:SetLooping("REPEAT")
+    local flip = loop:CreateAnimation("FlipBook")
+    flip:SetTarget(ants)
+    flip:SetDuration(1)
+    flip:SetFlipBookRows(6)
+    flip:SetFlipBookColumns(5)
+    flip:SetFlipBookFrames(30)
+    flip:SetFlipBookFrameWidth(0)
+    flip:SetFlipBookFrameHeight(0)
+
+    mark:SetScript("OnShow", function() pcall(loop.Play, loop) end)
     mark:Hide()
     button:AddPandemicRegion(mark)
+    loop:Play()
 end
 
 -- The colour and the duration options are captured when the container is

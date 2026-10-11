@@ -29,7 +29,7 @@ ns.locales.enUS = {
     OPT_RESET            = "Reset position",
     OPT_CLASS_COLOR      = "Class colours (outline when missing, filled when applied)",
     OPT_SWIPE            = "Show remaining DoT time as a swipe",
-    OPT_PANDEMIC         = "Mark the pandemic window (dot can be refreshed)",
+    OPT_PANDEMIC         = "Running ants in the pandemic window (DoT can be refreshed)",
     OPT_COLUMNS          = "Squares per row",
     OPT_SIZE             = "Square size (pixels)",
 }
