@@ -5,6 +5,7 @@ local addonName, ns = ...
 -- present on the enemy, so list exactly the DoTs that should be spread.
 ns.PROFILES = {
     [265] = { class = "WARLOCK",     spells = { 980 } },           -- Affliction: Agony
+    [256] = { class = "PRIEST",      spells = { 589 } },           -- Discipline: Shadow Word: Pain
     [258] = { class = "PRIEST",      spells = { 34914, 589 } },    -- Shadow: Vampiric Touch + Shadow Word: Pain
     [63]  = { class = "MAGE",        spells = { 12654 } },         -- Fire: Ignite
     [252] = { class = "DEATHKNIGHT", spells = { 191587 } },        -- Unholy: Virulent Plague
