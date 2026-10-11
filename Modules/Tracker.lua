@@ -164,6 +164,17 @@ local function isFighting(unit)
     return hasThreat(unit)
 end
 
+-- A dead enemy keeps its nameplate for the length of the death animation, and
+-- its DoTs are already gone, so it would sit there as an empty square. Unlike
+-- the other predicates this one resolves to "alive" when the answer is
+-- refused, so a secret value can never hide a live target.
+local function isDead(unit)
+    local ok, dead = pcall(UnitIsDead, unit)
+    if not ok then return false end
+    local ok2, result = pcall(equalsTrue, dead)
+    return ok2 and result
+end
+
 -- Hostility gates entry into the tracked set but never exit from it. Boss
 -- summons routinely arrive unattackable — a spawn animation, an immunity
 -- window, a neutral faction that flips once they engage — so a plate that
@@ -173,6 +184,7 @@ end
 -- of the fight, and dropping it would jump its square to the end of the grid
 -- when it comes back. Leaving is decided by engagement alone, through grace.
 local function qualifies(unit)
+    if isDead(unit) then return false end
     if tracked[unit] then return isFighting(unit) end
     return isHostile(unit) and isFighting(unit)
 end
@@ -298,6 +310,14 @@ end
 local function refreshUnit(unit)
     if not plates[unit] then return false end
 
+    -- Death skips the grace period: the enemy is not coming back.
+    if tracked[unit] and isDead(unit) then
+        graceUntil[unit] = nil
+        setTracked(unit, false)
+        rebuildUnitList()
+        return true
+    end
+
     if not qualifies(unit) then
         if not tracked[unit] or graceUntil[unit] then return false end
         graceUntil[unit] = GetTime() + COMBAT_GRACE
@@ -349,7 +369,9 @@ local frame = CreateFrame("Frame")
 -- only ones that it became attackable. All three carry nameplate tokens. They
 -- are registered only while the player is fighting: nothing is rendered
 -- outside combat, and combat start re-syncs every plate anyway.
-local UNIT_STATE_EVENTS = { "UNIT_FLAGS", "UNIT_FACTION", "UNIT_THREAT_LIST_UPDATE" }
+-- UNIT_HEALTH is there to catch a death the moment it happens; for any unit
+-- that is not tracked it costs one table lookup.
+local UNIT_STATE_EVENTS = { "UNIT_FLAGS", "UNIT_FACTION", "UNIT_THREAT_LIST_UPDATE", "UNIT_HEALTH" }
 
 local function setUnitStateEvents(enabled)
     for _, event in ipairs(UNIT_STATE_EVENTS) do
@@ -448,6 +470,14 @@ end
 handlers.UNIT_FLAGS              = onUnitStateChanged
 handlers.UNIT_FACTION            = onUnitStateChanged
 handlers.UNIT_THREAT_LIST_UPDATE = onUnitStateChanged
+
+function handlers.UNIT_HEALTH(unit)
+    if not tracked[unit] or not isDead(unit) then return end
+    if refreshUnit(unit) then
+        ns:Debug("died %s -> %d unit(s)", unit, #state.units)
+        render()
+    end
+end
 
 function handlers.ENCOUNTER_START()
     setEncounter(true)
