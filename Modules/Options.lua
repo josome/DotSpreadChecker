@@ -370,6 +370,16 @@ local function createPanel()
     end
 end
 
+-- Opens the settings window on this addon's page (minimap right-click).
+function M:Open()
+    if category and Settings and Settings.OpenToCategory then
+        local id = category.GetID and category:GetID() or category.ID
+        Settings.OpenToCategory(id)
+    elseif panel and InterfaceOptionsFrame_OpenToCategory then
+        InterfaceOptionsFrame_OpenToCategory(panel)
+    end
+end
+
 -- Keep checkboxes and the current-spec highlight in step with slash commands
 -- and spec changes while the panel is open.
 function M:Refresh()

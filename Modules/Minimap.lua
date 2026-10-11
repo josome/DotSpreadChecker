@@ -15,7 +15,8 @@ function M:OnDBReady()
         label = L["ADDON_TITLE"],
         OnClick = function(_, button)
             if button == "RightButton" then
-                ns:ResetPosition()
+                local options = ns.modules.options
+                if options then options:Open() end
             else
                 ns:ToggleLocked()
             end
