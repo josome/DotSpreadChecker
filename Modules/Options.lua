@@ -323,15 +323,11 @@ local function createPanel()
         function(v) ns.db.durationSwipe = v; relayout(true) end)
     swipe:SetPoint("TOPLEFT", classColor, "BOTTOMLEFT", 0, -2)
 
-    local pandemic = createCheck(content, L["OPT_PANDEMIC"],
-        function() return ns.db.pandemicMark end,
-        function(v) ns.db.pandemicMark = v; relayout(true) end)
-    pandemic:SetPoint("TOPLEFT", swipe, "BOTTOMLEFT", 0, -2)
 
     local columns = createStepper(content, L["OPT_COLUMNS"], 1, 20, 1,
         function() return ns.db.columns end,
         function(v) ns.db.columns = v; relayout(false) end)
-    columns:SetPoint("TOPLEFT", pandemic, "BOTTOMLEFT", 4, -8)
+    columns:SetPoint("TOPLEFT", swipe, "BOTTOMLEFT", 4, -8)
 
     local size = createStepper(content, L["OPT_SIZE"], 8, 48, 2,
         function() return ns.db.squareSize end,
