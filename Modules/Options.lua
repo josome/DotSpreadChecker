@@ -250,24 +250,38 @@ local function createPanel()
     panel = CreateFrame("Frame")
     panel.name = L["ADDON_TITLE"]
 
-    local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    -- Everything lives on a scroll child, so the list of specs and the
+    -- settings below it stay reachable however short the settings window is.
+    local scroll = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint("TOPLEFT", 0, -4)
+    scroll:SetPoint("BOTTOMRIGHT", -28, 4)
+
+    local content = CreateFrame("Frame", nil, scroll)
+    content:SetSize(640, 1)
+    scroll:SetScrollChild(content)
+    scroll:SetScript("OnSizeChanged", function(self, width)
+        content:SetWidth(math.max(width, 1))
+        if panel.updateHeight then C_Timer.After(0, panel.updateHeight) end
+    end)
+
+    local title = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
     title:SetText(L["ADDON_TITLE"] .. " |cff9d9d9dv" .. ns.version .. "|r")
 
-    local desc = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    local desc = content:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
     desc:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
     desc:SetWidth(600)
     desc:SetJustifyH("LEFT")
     desc:SetText(L["OPT_DESC"])
 
-    panel.current = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    panel.current = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
     panel.current:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -12)
 
-    local header = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
+    local header = content:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
     header:SetPoint("TOPLEFT", panel.current, "BOTTOMLEFT", 0, -16)
     header:SetText(L["OPT_TRACKED_HEADER"])
 
-    panel.list = CreateFrame("Frame", nil, panel)
+    panel.list = CreateFrame("Frame", nil, content)
     panel.list:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -8)
     panel.list:SetSize(600, 1)
 
@@ -275,21 +289,21 @@ local function createPanel()
     for _ in pairs(ns.PROFILES) do count = count + 1 end
     local listHeight = count * (ROW_HEIGHT + 4)
 
-    local settingsHeader = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
+    local settingsHeader = content:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
     settingsHeader:SetPoint("TOPLEFT", panel.list, "TOPLEFT", 0, -listHeight - 16)
     settingsHeader:SetText(L["OPT_SETTINGS_HEADER"])
 
-    local lock = createCheck(panel, L["OPT_LOCKED"],
+    local lock = createCheck(content, L["OPT_LOCKED"],
         function() return ns.db.locked end,
         function(v) ns:SetLocked(v) end)
     lock:SetPoint("TOPLEFT", settingsHeader, "BOTTOMLEFT", -4, -6)
 
-    local combat = createCheck(panel, L["OPT_COMBAT_ONLY"],
+    local combat = createCheck(content, L["OPT_COMBAT_ONLY"],
         function() return ns.db.combatOnly end,
         function(v) if v ~= ns.db.combatOnly then ns:ToggleCombatOnly() end end)
     combat:SetPoint("TOPLEFT", lock, "BOTTOMLEFT", 0, -2)
 
-    local minimap = createCheck(panel, L["OPT_MINIMAP"],
+    local minimap = createCheck(content, L["OPT_MINIMAP"],
         function() return not ns.db.minimap.hide end,
         function(v)
             if v == ns.db.minimap.hide then
@@ -299,38 +313,50 @@ local function createPanel()
         end)
     minimap:SetPoint("TOPLEFT", combat, "BOTTOMLEFT", 0, -2)
 
-    local classColor = createCheck(panel, L["OPT_CLASS_COLOR"],
+    local classColor = createCheck(content, L["OPT_CLASS_COLOR"],
         function() return ns.db.classColor end,
         function(v) ns.db.classColor = v; relayout(true) end)
     classColor:SetPoint("TOPLEFT", minimap, "BOTTOMLEFT", 0, -2)
 
-    local swipe = createCheck(panel, L["OPT_SWIPE"],
+    local swipe = createCheck(content, L["OPT_SWIPE"],
         function() return ns.db.durationSwipe end,
         function(v) ns.db.durationSwipe = v; relayout(true) end)
     swipe:SetPoint("TOPLEFT", classColor, "BOTTOMLEFT", 0, -2)
 
-    local pandemic = createCheck(panel, L["OPT_PANDEMIC"],
+    local pandemic = createCheck(content, L["OPT_PANDEMIC"],
         function() return ns.db.pandemicMark end,
         function(v) ns.db.pandemicMark = v; relayout(true) end)
     pandemic:SetPoint("TOPLEFT", swipe, "BOTTOMLEFT", 0, -2)
 
-    local columns = createStepper(panel, L["OPT_COLUMNS"], 1, 20, 1,
+    local columns = createStepper(content, L["OPT_COLUMNS"], 1, 20, 1,
         function() return ns.db.columns end,
         function(v) ns.db.columns = v; relayout(false) end)
     columns:SetPoint("TOPLEFT", pandemic, "BOTTOMLEFT", 4, -8)
 
-    local size = createStepper(panel, L["OPT_SIZE"], 8, 48, 2,
+    local size = createStepper(content, L["OPT_SIZE"], 8, 48, 2,
         function() return ns.db.squareSize end,
         function(v) ns.db.squareSize = v; relayout(true) end)
     size:SetPoint("TOPLEFT", columns, "BOTTOMLEFT", 0, -4)
 
-    local reset = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+    local reset = CreateFrame("Button", nil, content, "UIPanelButtonTemplate")
     reset:SetSize(180, 24)
     reset:SetPoint("TOPLEFT", size, "BOTTOMLEFT", 0, -10)
     reset:SetText(L["OPT_RESET"])
     reset:SetScript("OnClick", function() ns:ResetPosition() end)
 
-    panel:SetScript("OnShow", function() ns:CallSafe(fillRows) end)
+    -- The scroll range follows the real bottom of the last control. Until the
+    -- frames have been laid out once, a generous estimate stands in for it.
+    content:SetHeight(480 + listHeight)
+    panel.updateHeight = function()
+        local top, bottom = content:GetTop(), reset:GetBottom()
+        if top and bottom and top > bottom then content:SetHeight(top - bottom + 16) end
+    end
+    content:SetScript("OnShow", function() C_Timer.After(0, panel.updateHeight) end)
+
+    panel:SetScript("OnShow", function()
+        ns:CallSafe(fillRows)
+        ns:CallSafe(panel.updateHeight)
+    end)
     -- Start hidden so the first open is a real hide-to-show transition, and
     -- fill once now so nothing is blank even if OnShow is skipped.
     panel:Hide()
