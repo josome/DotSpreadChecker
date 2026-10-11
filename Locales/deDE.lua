@@ -2,7 +2,7 @@ local addonName, ns = ...
 
 ns.locales = ns.locales or {}
 ns.locales.deDE = {
-    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Disziplin, Schatten, Feuer, Unheilig, Meucheln, Waffen, Verstärkung, Gleichgewicht, Wildheit, Wächter)",
+    TOOLTIP_DESC         = "DoT-Monitor (Gebrechen, Disziplin, Schatten, Feuer, Unheilig, Meucheln, Waffen, Elementar, Verstärkung, Gleichgewicht, Wildheit, Wächter)",
     TOOLTIP_LEFT_CLICK   = "Linksklick: Optionen öffnen",
     TOOLTIP_RIGHT_CLICK  = "Rechtsklick: Anker sperren / entsperren (verschieben)",
     ANCHOR_LABEL         = "DoTs (ziehen)",

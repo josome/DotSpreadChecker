@@ -17,6 +17,7 @@ One square per enemy nameplate in combat. A square turns red once every DoT trac
 | Unholy Death Knight | Virulent Plague |
 | Assassination Rogue | Rupture + Garrote |
 | Arms Warrior | Rend |
+| Elemental Shaman | Flame Shock |
 | Enhancement Shaman | Flame Shock |
 | Balance Druid | Moonfire + Sunfire |
 | Feral Druid | Rake + Rip |

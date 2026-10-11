@@ -11,6 +11,7 @@ ns.PROFILES = {
     [252] = { class = "DEATHKNIGHT", spells = { 191587 } },        -- Unholy: Virulent Plague
     [259] = { class = "ROGUE",       spells = { 1943, 703 } },     -- Assassination: Rupture + Garrote
     [71]  = { class = "WARRIOR",     spells = { 388539 } },        -- Arms: Rend
+    [262] = { class = "SHAMAN",      spells = { 188389 } },        -- Elemental: Flame Shock
     [263] = { class = "SHAMAN",      spells = { 188389 } },        -- Enhancement: Flame Shock
     [102] = { class = "DRUID",       spells = { 164812, 164815 } }, -- Balance: Moonfire + Sunfire
     -- Guardian only spreads Moonfire with the Elune's Chosen hero talents
