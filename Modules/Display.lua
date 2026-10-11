@@ -217,6 +217,10 @@ local function createContainer(clip, size)
     container:AddAuraGroup("dots", "HARMFUL|PLAYER", {
         maxFrameCount    = #ns.TRACKED_SPELLS,
         candidateFilters = { includeSpellIDs = includeSpellMap() },
+        -- Latest expiry first, so the visible last button (and its swipe and
+        -- pandemic mark) always belongs to the DoT that runs out soonest.
+        sortMethod       = AuraContainerSortMethod and AuraContainerSortMethod.ExpirationOnly,
+        sortDirection    = AuraContainerSortDirection and AuraContainerSortDirection.Reverse,
         initializeFrame  = makeButtonInitializer(size),
         layout           = {
             elementWidth   = pitch,
