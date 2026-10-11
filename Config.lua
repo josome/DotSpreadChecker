@@ -37,6 +37,8 @@ local defaults = {
     classColor  = true,
     -- Swipe on applied squares showing the DoT's remaining time.
     durationSwipe = true,
+    -- Opt-in: white inner frame while the DoT is in its pandemic (refresh) window.
+    pandemicFrame = false,
     -- [specID] = { [spellID] = true } for DoTs the player opted out of.
     disabledSpells = {},
     dbVersion   = 0,

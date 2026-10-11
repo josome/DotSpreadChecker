@@ -154,12 +154,46 @@ local function addDurationSwipe(button, size)
     button:SetDurationCooldown(cd)
 end
 
+-- Pandemic window: the client shows this region only while refreshing the DoT
+-- would carry over its remaining time. It is a white inner frame with a black
+-- line inside it, which reads on every class colour. (An animated version did
+-- not work: the client hides and shows the region itself, and the flipbook
+-- never played, leaving the whole sprite sheet on screen.)
+local function addPandemicMark(button, size)
+    local mark = CreateFrame("Frame", nil, button)
+    mark:SetSize(size, size)
+    mark:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+    mark:SetFrameLevel(button:GetFrameLevel() + 5)
+
+    local t = math.max(2, math.floor(size / 6))
+    local function frameEdges(inset, thickness, r, g, b, layer)
+        local inner = size - inset * 2
+        local specs = {
+            { "TOPLEFT", inset, -inset, inner, thickness },
+            { "BOTTOMLEFT", inset, inset, inner, thickness },
+            { "TOPLEFT", inset, -inset, thickness, inner },
+            { "TOPRIGHT", -inset, -inset, thickness, inner },
+        }
+        for _, sp in ipairs(specs) do
+            local edge = mark:CreateTexture(nil, layer)
+            edge:SetPoint(sp[1], sp[2], sp[3])
+            edge:SetSize(sp[4], sp[5])
+            edge:SetColorTexture(r, g, b, 1)
+        end
+    end
+    frameEdges(0, t, 1, 1, 1, "ARTWORK")
+    frameEdges(t, 1, 0, 0, 0, "OVERLAY")
+
+    mark:Hide()
+    button:AddPandemicRegion(mark)
+end
+
 -- The colour and the duration options are captured when the container is
 -- built; changing them later means rebuilding the slots (see M:Relayout).
 local function makeButtonInitializer(size)
     local pitch = size + BUTTON_PAD
     local c = appliedColor()
-    local swipe = ns.db.durationSwipe
+    local swipe, pandemic = ns.db.durationSwipe, ns.db.pandemicFrame
     return function(button)
         pcall(button.SetMouseMotionEnabled, button, false)
         pcall(button.SetSize, button, pitch, pitch)
@@ -167,6 +201,10 @@ local function makeButtonInitializer(size)
         if swipe then
             local ok, err = pcall(addDurationSwipe, button, size)
             if not ok then ns:Debug("duration swipe failed: %s", tostring(err)) end
+        end
+        if pandemic then
+            local ok, err = pcall(addPandemicMark, button, size)
+            if not ok then ns:Debug("pandemic mark failed: %s", tostring(err)) end
         end
     end
 end
@@ -193,8 +231,8 @@ local function createContainer(clip, size)
     container:AddAuraGroup("dots", "HARMFUL|PLAYER", {
         maxFrameCount    = #ns.TRACKED_SPELLS,
         candidateFilters = { includeSpellIDs = includeSpellMap() },
-        -- Latest expiry first, so the visible last button (and its swipe)
-        -- always belongs to the DoT that runs out soonest.
+        -- Latest expiry first, so the visible last button (and its swipe and
+        -- pandemic mark) always belongs to the DoT that runs out soonest.
         sortMethod       = AuraContainerSortMethod and AuraContainerSortMethod.ExpirationOnly,
         sortDirection    = AuraContainerSortDirection and AuraContainerSortDirection.Reverse,
         initializeFrame  = makeButtonInitializer(size),
