@@ -177,8 +177,6 @@ function fillRows()
         local suffix = ""
         if entry.profile.heroName then
             suffix = " |cff9d9d9d" .. L["OPT_HERO_ONLY"]:format(entry.profile.heroName) .. "|r"
-        elseif entry.profile.heroSpells then
-            suffix = " |cff9d9d9d" .. L["OPT_HERO_DEPENDS"] .. "|r"
         end
         row.label:SetText(("|c%s%s|r%s"):format(classColor(entry.classFile), entry.name, suffix))
         row.highlight:SetShown(entry.specID == current)
@@ -203,7 +201,11 @@ function fillRows()
             w.text:ClearAllPoints()
             w.text:SetPoint("LEFT", w.icon, "RIGHT", 4, 0)
             local name = spellName(id) or ("#" .. id)
-            w.text:SetText(i < #spells and (name .. "  +") or name)
+            -- Hero-dependent DoTs are alternatives, not a set to stack.
+            local hero = entry.profile.spellHero and entry.profile.spellHero[id]
+            if hero then name = name .. " |cff9d9d9d(" .. hero .. ")|r" end
+            local joiner = entry.profile.heroSpells and "  /" or "  +"
+            w.text:SetText(i < #spells and (name .. joiner) or name)
             w.text:SetTextColor(enabled and 1 or 0.5, enabled and 1 or 0.5, enabled and 1 or 0.5)
             w.icon:Show()
             w.text:Show()
