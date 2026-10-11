@@ -25,6 +25,8 @@ ns.locales.deDE = {
     OPT_MINIMAP          = "Minimap-Symbol anzeigen",
     OPT_RESET            = "Position zurücksetzen",
     OPT_CLASS_COLOR      = "Klassenfarbe (Rahmen = fehlt, gefüllt = DoT drauf)",
+    OPT_SWIPE            = "Restlaufzeit des DoTs als Swipe anzeigen",
+    OPT_PANDEMIC         = "Pandemic-Fenster markieren (DoT erneuerbar)",
     OPT_COLUMNS          = "Quadrate pro Zeile",
     OPT_SIZE             = "Quadratgröße (Pixel)",
 }

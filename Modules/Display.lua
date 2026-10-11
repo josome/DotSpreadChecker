@@ -138,15 +138,60 @@ local function paintBleedTexture(tex, size, r, g, b, a)
     tex:SetTexelSnappingBias(0)
 end
 
--- The colour is captured when the container is built; changing it later means
--- rebuilding the slots (see M:Relayout).
+-- Remaining time: the button hands the aura's duration object straight to a
+-- Cooldown frame (SetDurationCooldown), so the client draws the swipe and the
+-- addon never sees a number. Reversed, the dark part is the elapsed time and
+-- the coloured part shrinks as the DoT runs out.
+local function addDurationSwipe(button, size)
+    local cd = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
+    cd:SetPoint("TOPLEFT", -BLEED, BLEED)
+    cd:SetSize(size + BLEED * 2, size + BLEED * 2)
+    cd:SetReverse(true)
+    cd:SetDrawEdge(false)
+    cd:SetDrawBling(false)
+    cd:SetHideCountdownNumbers(true)
+    cd:SetSwipeColor(0, 0, 0, 0.7)
+    button:SetDurationCooldown(cd)
+end
+
+-- Pandemic window: the client shows this region only while refreshing the DoT
+-- would carry over its remaining time. A small white centre mark with a black
+-- rim reads on every class colour.
+local function addPandemicMark(button, size)
+    local mark = CreateFrame("Frame", nil, button)
+    local m = math.max(4, math.floor(size / 3))
+    mark:SetSize(m, m)
+    mark:SetPoint("CENTER", button, "TOPLEFT", size / 2, -size / 2)
+    mark:SetFrameLevel(button:GetFrameLevel() + 5)
+    local rim = mark:CreateTexture(nil, "ARTWORK")
+    rim:SetAllPoints()
+    rim:SetColorTexture(0, 0, 0, 1)
+    local dot = mark:CreateTexture(nil, "OVERLAY")
+    dot:SetPoint("TOPLEFT", 1, -1)
+    dot:SetPoint("BOTTOMRIGHT", -1, 1)
+    dot:SetColorTexture(1, 1, 1, 1)
+    mark:Hide()
+    button:AddPandemicRegion(mark)
+end
+
+-- The colour and the duration options are captured when the container is
+-- built; changing them later means rebuilding the slots (see M:Relayout).
 local function makeButtonInitializer(size)
     local pitch = size + BUTTON_PAD
     local c = appliedColor()
+    local swipe, pandemic = ns.db.durationSwipe, ns.db.pandemicMark
     return function(button)
         pcall(button.SetMouseMotionEnabled, button, false)
         pcall(button.SetSize, button, pitch, pitch)
         paintBleedTexture(button:CreateTexture(nil, "ARTWORK"), size, c[1], c[2], c[3], c[4])
+        if swipe then
+            local ok, err = pcall(addDurationSwipe, button, size)
+            if not ok then ns:Debug("duration swipe failed: %s", tostring(err)) end
+        end
+        if pandemic then
+            local ok, err = pcall(addPandemicMark, button, size)
+            if not ok then ns:Debug("pandemic mark failed: %s", tostring(err)) end
+        end
     end
 end
 

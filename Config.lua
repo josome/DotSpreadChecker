@@ -35,6 +35,10 @@ local defaults = {
     combatOnly  = true,
     -- Paint squares with an applied DoT in the player's class colour instead of red.
     classColor  = true,
+    -- Swipe on applied squares showing the DoT's remaining time.
+    durationSwipe = true,
+    -- Centre mark while the DoT is in its pandemic (refresh) window.
+    pandemicMark  = true,
     -- [specID] = { [spellID] = true } for DoTs the player opted out of.
     disabledSpells = {},
     dbVersion   = 0,
