@@ -155,36 +155,37 @@ local function addDurationSwipe(button, size)
 end
 
 -- Pandemic window: the client shows this region only while refreshing the DoT
--- would carry over its remaining time. It carries the "marching ants" loop of
--- the action bar proc highlight. Blizzard draws that at 1.4x the button with
--- the ants on the button edge; at 1.2x the square the ants run just inside it,
--- where the clip frame does not cut them off.
+-- would carry over its remaining time. It is a white inner frame with a black
+-- line inside it, which reads on every class colour. (An animated version did
+-- not work: the client hides and shows the region itself, and the flipbook
+-- never played, leaving the whole sprite sheet on screen.)
 local function addPandemicMark(button, size)
     local mark = CreateFrame("Frame", nil, button)
-    local m = size * 1.2
-    mark:SetSize(m, m)
-    mark:SetPoint("CENTER", button, "TOPLEFT", size / 2, -size / 2)
+    mark:SetSize(size, size)
+    mark:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
     mark:SetFrameLevel(button:GetFrameLevel() + 5)
 
-    local ants = mark:CreateTexture(nil, "OVERLAY")
-    ants:SetAllPoints()
-    ants:SetAtlas("UI-HUD-ActionBar-Proc-Loop-Flipbook")
+    local t = math.max(2, math.floor(size / 6))
+    local function frameEdges(inset, thickness, r, g, b, layer)
+        local inner = size - inset * 2
+        local specs = {
+            { "TOPLEFT", inset, -inset, inner, thickness },
+            { "BOTTOMLEFT", inset, inset, inner, thickness },
+            { "TOPLEFT", inset, -inset, thickness, inner },
+            { "TOPRIGHT", -inset, -inset, thickness, inner },
+        }
+        for _, sp in ipairs(specs) do
+            local edge = mark:CreateTexture(nil, layer)
+            edge:SetPoint(sp[1], sp[2], sp[3])
+            edge:SetSize(sp[4], sp[5])
+            edge:SetColorTexture(r, g, b, 1)
+        end
+    end
+    frameEdges(0, t, 1, 1, 1, "ARTWORK")
+    frameEdges(t, 1, 0, 0, 0, "OVERLAY")
 
-    local loop = mark:CreateAnimationGroup()
-    loop:SetLooping("REPEAT")
-    local flip = loop:CreateAnimation("FlipBook")
-    flip:SetTarget(ants)
-    flip:SetDuration(1)
-    flip:SetFlipBookRows(6)
-    flip:SetFlipBookColumns(5)
-    flip:SetFlipBookFrames(30)
-    flip:SetFlipBookFrameWidth(0)
-    flip:SetFlipBookFrameHeight(0)
-
-    mark:SetScript("OnShow", function() pcall(loop.Play, loop) end)
     mark:Hide()
     button:AddPandemicRegion(mark)
-    loop:Play()
 end
 
 -- The colour and the duration options are captured when the container is

@@ -26,7 +26,7 @@ ns.locales.deDE = {
     OPT_RESET            = "Position zurücksetzen",
     OPT_CLASS_COLOR      = "Klassenfarbe (Rahmen = fehlt, gefüllt = DoT drauf)",
     OPT_SWIPE            = "Restlaufzeit des DoTs als Swipe anzeigen",
-    OPT_PANDEMIC         = "Laufende Ameisen im Pandemic-Fenster (DoT erneuerbar)",
+    OPT_PANDEMIC         = "Weißer Rahmen im Pandemic-Fenster (DoT erneuerbar)",
     OPT_COLUMNS          = "Quadrate pro Zeile",
     OPT_SIZE             = "Quadratgröße (Pixel)",
 }
