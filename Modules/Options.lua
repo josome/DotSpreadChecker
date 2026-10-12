@@ -406,11 +406,17 @@ local function createPanel()
     reset:SetText(L["OPT_RESET"])
     reset:SetScript("OnClick", function() ns:ResetPosition() end)
 
+    local credits = content:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+    credits:SetPoint("TOPLEFT", reset, "BOTTOMLEFT", 0, -16)
+    credits:SetWidth(600)
+    credits:SetJustifyH("LEFT")
+    credits:SetText(L["OPT_CREDITS"])
+
     -- The scroll range follows the real bottom of the last control. Until the
     -- frames have been laid out once, a generous estimate stands in for it.
-    content:SetHeight(480 + listHeight)
+    content:SetHeight(520 + listHeight)
     panel.updateHeight = function()
-        local top, bottom = content:GetTop(), reset:GetBottom()
+        local top, bottom = content:GetTop(), credits:GetBottom()
         if top and bottom and top > bottom then content:SetHeight(top - bottom + 16) end
     end
     content:SetScript("OnShow", function() C_Timer.After(0, panel.updateHeight) end)

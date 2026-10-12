@@ -32,6 +32,7 @@ ns.locales.enUS = {
     OPT_PANDEMIC         = "White frame in the pandemic window (DoT can be refreshed)",
     OPT_HERO_ONLY        = "only with %s",
     OPT_HERO_DEPENDS     = "by hero talents",
+    OPT_CREDITS          = "Credits: based on WADM by guezito (itself a fork of ARDM). Licensed under GPL-2.0-or-later.",
     OPT_COLUMNS          = "Squares per row",
     OPT_SIZE             = "Square size (pixels)",
 }

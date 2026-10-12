@@ -29,6 +29,7 @@ ns.locales.deDE = {
     OPT_PANDEMIC         = "Weißer Rahmen im Pandemic-Fenster (DoT erneuerbar)",
     OPT_HERO_ONLY        = "nur mit %s",
     OPT_HERO_DEPENDS     = "je nach Heldentalent",
+    OPT_CREDITS          = "Credits: basiert auf WADM von guezito (selbst ein Fork von ARDM). Lizenz: GPL-2.0-or-later.",
     OPT_COLUMNS          = "Quadrate pro Zeile",
     OPT_SIZE             = "Quadratgröße (Pixel)",
 }
